@@ -51,7 +51,6 @@ From this image:
 
 - CF\_WWWFPM\_USER\_ID [int]: User-ID for wwwphpfpm
 - CF\_WWWFPM\_GROUP\_ID [int]: Group-ID for wwwphpfpm
-- CF\_ENABLE\_CRON [bool]: Enable cron service?
 
 ## Using cron
 You'll need to create the crontab file `./mpcron/wwwphpfpm` and then add some task to the file:
