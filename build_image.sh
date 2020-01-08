@@ -61,7 +61,7 @@ _getCpuArch debian_dist >/dev/null || exit 1
 
 LVAR_REPO_PREFIX="tsle"
 LVAR_PARENT_IMAGE_NAME="ws-apache-base-$(_getCpuArch debian_dist)"
-LVAR_PARENT_IMAGE_VER="1.0"
+LVAR_PARENT_IMAGE_VER="1.1"
 
 LVAR_PARENT_IMG_FULL="${LVAR_PARENT_IMAGE_NAME}:${LVAR_PARENT_IMAGE_VER}"
 
