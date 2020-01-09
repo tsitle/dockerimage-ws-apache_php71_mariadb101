@@ -101,7 +101,7 @@ cd build-ctx || exit 1
 # ----------------------------------------------------------
 
 LVAR_IMAGE_NAME="ws-apache-php71-mariadb101-$(_getCpuArch debian_dist)"
-LVAR_IMAGE_VER="$LVAR_PARENT_IMAGE_VER"
+LVAR_IMAGE_VER="${LVAR_PARENT_IMAGE_VER}b"
 
 docker build \
 		--build-arg CF_CPUARCH_DEB_DIST="$(_getCpuArch debian_dist)" \
