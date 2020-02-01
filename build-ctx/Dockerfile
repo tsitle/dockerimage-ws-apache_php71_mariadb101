@@ -1,5 +1,3 @@
-ARG CF_CPUARCH_DEB_DIST
-
 ARG CF_APACHE_BASE_IMGFULL
 
 FROM ${CF_APACHE_BASE_IMGFULL}
@@ -38,6 +36,7 @@ RUN \
 				php${CF_PHP_FPM_VERSION}-gd \
 				php${CF_PHP_FPM_VERSION}-imagick \
 				php${CF_PHP_FPM_VERSION}-imap \
+				php${CF_PHP_FPM_VERSION}-intl \
 				php${CF_PHP_FPM_VERSION}-json \
 				php${CF_PHP_FPM_VERSION}-mbstring \
 				php${CF_PHP_FPM_VERSION}-mysql \
@@ -50,8 +49,27 @@ RUN \
 				php${CF_PHP_FPM_VERSION}-mcrypt \
 				#libapache2-mod-php${CF_PHP_FPM_VERSION} \
 				php-pear \
-				xml-core
+				xml-core \
+			# other packages
+				composer
 
+#
+RUN \
+	apt-get --quiet --yes autoclean \
+	&& apt-get --quiet --yes autoremove \
+	&& apt-get --quiet --yes clean \
+	&& rm -rf \
+			/usr/share/man \
+			/usr/share/doc \
+			/usr/share/icons \
+			/usr/share/poppler \
+			/usr/share/mime \
+			/var/lib/apt/lists*
+
+#
+ENV DEBIAN_FRONTEND=dialog
+
+#
 RUN \
 	( a2dismod php${CF_PHP_FPM_VERSION} 2>/dev/null || echo -n "" ) \
 	&& a2enconf php${CF_PHP_FPM_VERSION}-fpm \
@@ -74,19 +92,3 @@ RUN \
 	&& mv ${CF_WEBROOT}/index.html ${CF_WEBROOT}/${CF_WEBROOT_SITE}/
 
 ENV TMP_WEBROOT_LAST_SITE=
-
-#
-RUN \
-	apt-get --quiet --yes autoclean \
-	&& apt-get --quiet --yes autoremove \
-	&& apt-get --quiet --yes clean \
-	&& rm -rf \
-			/usr/share/man \
-			/usr/share/doc \
-			/usr/share/icons \
-			/usr/share/poppler \
-			/usr/share/mime \
-			/var/lib/apt/lists*
-
-#
-ENV DEBIAN_FRONTEND=dialog

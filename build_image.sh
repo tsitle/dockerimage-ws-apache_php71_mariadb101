@@ -59,9 +59,11 @@ _getCpuArch debian_dist >/dev/null || exit 1
 
 # ----------------------------------------------------------
 
+LVAR_DEBIAN_DIST="$(_getCpuArch debian_dist)"
+
 LVAR_REPO_PREFIX="tsle"
-LVAR_PARENT_IMAGE_NAME="ws-apache-base-$(_getCpuArch debian_dist)"
-LVAR_PARENT_IMAGE_VER="1.1"
+LVAR_PARENT_IMAGE_NAME="ws-apache-base-$LVAR_DEBIAN_DIST"
+LVAR_PARENT_IMAGE_VER="1.2"
 
 LVAR_PARENT_IMG_FULL="${LVAR_PARENT_IMAGE_NAME}:${LVAR_PARENT_IMAGE_VER}"
 
@@ -100,11 +102,10 @@ cd build-ctx || exit 1
 
 # ----------------------------------------------------------
 
-LVAR_IMAGE_NAME="ws-apache-php71-mariadb101-$(_getCpuArch debian_dist)"
-LVAR_IMAGE_VER="${LVAR_PARENT_IMAGE_VER}b"
+LVAR_IMAGE_NAME="ws-apache-php71-mariadb101-$LVAR_DEBIAN_DIST"
+LVAR_IMAGE_VER="${LVAR_PARENT_IMAGE_VER}a"
 
 docker build \
-		--build-arg CF_CPUARCH_DEB_DIST="$(_getCpuArch debian_dist)" \
 		--build-arg CF_APACHE_BASE_IMGFULL="$LVAR_PARENT_IMG_FULL" \
 		--build-arg CF_APACHE_BASE_VER="$LVAR_PARENT_IMAGE_VER" \
 		-t "$LVAR_IMAGE_NAME":"$LVAR_IMAGE_VER" \
