@@ -49,9 +49,7 @@ RUN \
 				php${CF_PHP_FPM_VERSION}-mcrypt \
 				#libapache2-mod-php${CF_PHP_FPM_VERSION} \
 				php-pear \
-				xml-core \
-			# other packages
-				composer
+				xml-core
 
 #
 RUN \
@@ -69,6 +67,36 @@ RUN \
 #
 ENV DEBIAN_FRONTEND=dialog
 
+# install latest version of 'composer'
+RUN \
+	export EXPECTED_SIGNATURE="$(wget -q -O - https://composer.github.io/installer.sig)"; \
+	php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
+	|| exit 1; \
+	export ACTUAL_SIGNATURE="$(php -r "echo hash_file('sha384', 'composer-setup.php');")"; \
+	#
+	if [ -z "$EXPECTED_SIGNATURE" ]; then \
+		echo "EXPECTED_SIGNATURE empty !" >/dev/stderr; \
+		exit 1; \
+	fi; \
+	if [ -z "$ACTUAL_SIGNATURE" ]; then \
+		echo "ACTUAL_SIGNATURE empty !" >/dev/stderr; \
+		exit 1; \
+	fi; \
+	if [ "$EXPECTED_SIGNATURE" != "$ACTUAL_SIGNATURE" ]; then \
+		echo 'ERROR: Invalid installer signature' >/dev/stderr; \
+		exit 1; \
+	fi; \
+	#
+	php composer-setup.php --quiet \
+	&& rm composer-setup.php \
+	&& chmod a+x composer.phar \
+	&& mv composer.phar /usr/local/bin/composer \
+	|| exit 1; \
+	if [ ! -f /usr/share/doc/composer/copyright ]; then \
+		mkdir /usr/share/doc/composer; \
+		touch /usr/share/doc/composer/copyright; \
+	fi
+
 #
 RUN \
 	( a2dismod php${CF_PHP_FPM_VERSION} 2>/dev/null || echo -n "" ) \
@@ -77,7 +105,14 @@ RUN \
 
 # copy config files
 COPY files/php/ /etc/php/${CF_PHP_FPM_VERSION}/
-COPY files/apache/000-default.conf /etc/apache2/sites-available/
+COPY files/apache/* /etc/apache2/sites-available/
+
+RUN \
+	chmod 644 /etc/apache2/sites-available/* \
+	&& chown root:root /etc/apache2/sites-available/* \
+	|| exit 1; \
+	test -d /root/apache-defaults || mkdir /root/apache-defaults; \
+	cp /etc/apache2/sites-available/* /root/apache-defaults/
 
 #
 ENV TMP_WEBROOT_LAST_SITE=$CF_WEBROOT_SITE
