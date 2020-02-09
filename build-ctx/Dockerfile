@@ -93,7 +93,7 @@ RUN \
 	&& mv composer.phar /usr/local/bin/composer \
 	|| exit 1; \
 	if [ ! -f /usr/share/doc/composer/copyright ]; then \
-		mkdir /usr/share/doc/composer; \
+		mkdir -p /usr/share/doc/composer; \
 		touch /usr/share/doc/composer/copyright; \
 	fi
 
