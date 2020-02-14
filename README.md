@@ -81,7 +81,7 @@ Now you could enable cron in your docker-compose.yaml file like this:
 version: '3.5'
 services:
   apache:
-    image: "ws-apache-base-<ARCH>:<VERSION>"
+    image: "ws-apache-php71-mariadb101-<ARCH>:<VERSION>"
     ports:
       - "80:80"
     volumes:
